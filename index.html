@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loon Lake Field Team — Ecosystem Event Generator</title>
+<style>
+  :root{
+    --forest:#2C5F2D; --moss:#6B9E4B; --leaf:#93BE6B; --light:#EAF2E1;
+    --ink:#242424; --grey:#6B6B6B; --cream:#FBF9F3; --clay:#B85042; --gold:#E4A72E;
+    --line:#DDE7D2; --white:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--ink);
+    background:var(--cream);line-height:1.5;padding:18px}
+  .wrap{max-width:1040px;margin:0 auto}
+  header{background:var(--forest);color:#fff;border-radius:16px;padding:22px 26px;position:relative;overflow:hidden}
+  header .kick{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--leaf)}
+  header h1{margin:6px 0 4px;font-size:26px}
+  header p{margin:0;color:#D8E8CC;font-size:14px;max-width:640px}
+  header .blob{position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:#34702F}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:16px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+  .ctrl{display:flex;flex-direction:column;gap:4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--forest);text-transform:uppercase;letter-spacing:.5px}
+  select,button{font-family:inherit;font-size:15px;border-radius:10px;border:1px solid var(--line);padding:9px 12px;background:#fff;color:var(--ink)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .seg button{border:none;border-radius:0;background:#fff;padding:9px 14px;cursor:pointer}
+  .seg button.on{background:var(--moss);color:#fff;font-weight:700}
+  .btn{cursor:pointer;font-weight:700}
+  .btn.primary{background:var(--forest);color:#fff;border-color:var(--forest);padding:11px 20px;font-size:16px}
+  .btn.primary:hover{background:#255025}
+  .btn.ghost{background:var(--light);border-color:var(--leaf);color:var(--forest)}
+  .cardhead{background:var(--forest);color:#fff;border-radius:12px 12px 0 0;margin:-20px -20px 14px;padding:12px 20px;font-weight:700;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+  .cardhead .badge{background:#fff;color:var(--forest);border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
+  .scenario{background:var(--light);border-radius:10px;padding:14px 16px;font-size:17px;margin:12px 0}
+  .job{font-size:16px;margin:10px 0}
+  .job b{color:var(--forest)}
+  h3.sec{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--moss);margin:18px 0 8px}
+  .weblane{margin:8px 0}
+  .weblane .role{font-size:12px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-size:14px}
+  .chip small{color:var(--grey)}
+  .chip.hit{border-color:var(--clay);background:#FBEDEA}
+  .chip.hit small{color:var(--clay)}
+  .prompts li{margin:6px 0}
+  .starters{background:#fff;border:1px dashed var(--leaf);border-radius:10px;padding:12px 16px}
+  .starters i{color:var(--grey)}
+  .aibox{background:#FFF7E9;border:1px solid var(--gold);border-radius:12px;padding:16px 18px;margin-top:16px}
+  .aibox .lab{font-weight:700;color:#9a6b12}
+  .aiarg{background:#fff;border-radius:8px;padding:12px 14px;margin:10px 0;font-style:italic}
+  .reveal{background:var(--light);border-left:4px solid var(--moss);border-radius:8px;padding:12px 14px;margin-top:8px}
+  .reveal .k{font-weight:700;color:var(--forest)}
+  .hidden{display:none}
+  .foot{color:var(--grey);font-size:12.5px;margin-top:20px;border-top:1px solid var(--line);padding-top:12px}
+  .foot b{color:var(--forest)}
+  @media print{.controls,.btn.ghost{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="blob"></div>
+    <div class="kick">LOON LAKE FIELD TEAM · LESSON 3 EXTENSION</div>
+    <h1>Ecosystem Event Generator</h1>
+    <p>A closed, teacher-driven tool. Spin up a Minnesota ecosystem and a climate or disturbance event,
+       then have the Field Team use their food web as evidence to argue who survives. Nothing is typed to an
+       outside service and no student data is collected.</p>
+  </header>
+
+  <div class="panel">
+    <div class="controls">
+      <div class="ctrl">
+        <label>Ecosystem</label>
+        <select id="ecoSel"></select>
+      </div>
+      <div class="ctrl">
+        <label>Event</label>
+        <select id="evSel"></select>
+      </div>
+      <div class="ctrl">
+        <label>Difficulty</label>
+        <div class="seg" id="diffSeg">
+          <button data-d="foundational" class="on">Foundational</button>
+          <button data-d="extension">Extension</button>
+        </div>
+      </div>
+      <button class="btn primary" id="genBtn">Generate case file</button>
+      <button class="btn ghost" id="surpriseBtn">Surprise me</button>
+    </div>
+  </div>
+
+  <div class="panel" id="out"><em style="color:#6B6B6B">Choose an ecosystem and event, or press “Surprise me,” then Generate.</em></div>
+
+  <div class="foot">
+    <b>How this uses AI.</b> Two ways to run it. This built version is a <b>closed generator</b>: it recombines
+    curated, teacher-checked content, so it is safe for young students and works offline. A second option is a
+    <b>live-AI teacher co-pilot</b>, where the teacher prompts a general AI model to invent new scenarios and
+    arguments. The live version is more flexible but is teacher-run only and must be checked for accuracy, because
+    general AI tools are 13-plus and can make mistakes. Both are documented in the assignment write-up.
+  </div>
+</div>
+
+<script>
+/*PURE_START*/
+var ECOS = [
+  { id:'lake', name:'Northern Lake',
+    producers:[{n:'Algae',e:'sunlight'},{n:'Wild rice',e:'sunlight'},{n:'Pondweed',e:'sunlight'},{n:'Cattails',e:'sunlight'}],
+    consumers:[
+      {n:'Zooplankton',role:'Primary consumer',e:'algae'},
+      {n:'Mayfly larva',role:'Primary consumer',e:'algae and tiny plants'},
+      {n:'Tadpole',role:'Primary consumer',e:'algae'},
+      {n:'Muskrat',role:'Primary consumer',e:'cattails and pond plants'},
+      {n:'Bluegill',role:'Secondary consumer',e:'zooplankton and mayfly larvae'},
+      {n:'Minnow',role:'Secondary consumer',e:'zooplankton'},
+      {n:'Frog',role:'Secondary consumer',e:'mayfly larvae and insects'},
+      {n:'Northern pike',role:'Top consumer',e:'bluegill, minnows, and frogs'},
+      {n:'Great blue heron',role:'Top consumer',e:'fish and frogs'},
+      {n:'Loon',role:'Top consumer',e:'fish'}
+    ],
+    decomposers:[{n:'Bacteria'},{n:'Fungi'}], events:['drought','algal_bloom','invasive_mussel','early_iceout'] },
+
+  { id:'wetland', name:'Marsh Wetland',
+    producers:[{n:'Cattails',e:'sunlight'},{n:'Duckweed',e:'sunlight'},{n:'Sedges',e:'sunlight'},{n:'Bulrush',e:'sunlight'}],
+    consumers:[
+      {n:'Water insects',role:'Primary consumer',e:'duckweed and algae'},
+      {n:'Tadpole',role:'Primary consumer',e:'algae and plants'},
+      {n:'Muskrat',role:'Primary consumer',e:'cattails and sedges'},
+      {n:'Red-winged blackbird',role:'Secondary consumer',e:'water insects and seeds'},
+      {n:'Frog',role:'Secondary consumer',e:'water insects'},
+      {n:'Painted turtle',role:'Secondary consumer',e:'insects and plants'},
+      {n:'Great blue heron',role:'Top consumer',e:'frogs and fish'},
+      {n:'Mink',role:'Top consumer',e:'frogs, muskrats, and birds'}
+    ],
+    decomposers:[{n:'Bacteria'},{n:'Fungi'}], events:['drought','flood','invasive_carp','algal_bloom'] },
+
+  { id:'prairie', name:'Tallgrass Prairie',
+    producers:[{n:'Big bluestem grass',e:'sunlight'},{n:'Coneflower',e:'sunlight'},{n:'Milkweed',e:'sunlight'},{n:'Wild bergamot',e:'sunlight'}],
+    consumers:[
+      {n:'Grasshopper',role:'Primary consumer',e:'grasses'},
+      {n:'Prairie vole',role:'Primary consumer',e:'grasses and seeds'},
+      {n:'Monarch caterpillar',role:'Primary consumer',e:'milkweed'},
+      {n:'Bumblebee',role:'Primary consumer',e:'nectar'},
+      {n:'Meadowlark',role:'Secondary consumer',e:'grasshoppers and insects'},
+      {n:'Garter snake',role:'Secondary consumer',e:'voles and insects'},
+      {n:'Red fox',role:'Top consumer',e:'voles and birds'},
+      {n:'Red-tailed hawk',role:'Top consumer',e:'voles, snakes, and birds'}
+    ],
+    decomposers:[{n:'Bacteria'},{n:'Fungi'},{n:'Dung beetle'}], events:['drought','wildfire','late_frost','flood'] },
+
+  { id:'forest', name:'Northern Forest',
+    producers:[{n:'Aspen',e:'sunlight'},{n:'Birch',e:'sunlight'},{n:'Blueberry',e:'sunlight'},{n:'Lichen',e:'sunlight'}],
+    consumers:[
+      {n:'Snowshoe hare',role:'Primary consumer',e:'twigs, bark, and buds'},
+      {n:'Red squirrel',role:'Primary consumer',e:'seeds and buds'},
+      {n:'Ruffed grouse',role:'Primary consumer',e:'buds and berries'},
+      {n:'Beaver',role:'Primary consumer',e:'aspen and birch bark'},
+      {n:'Woodpecker',role:'Secondary consumer',e:'insects in bark'},
+      {n:'Red fox',role:'Secondary consumer',e:'hares and squirrels'},
+      {n:'Lynx',role:'Top consumer',e:'snowshoe hares'},
+      {n:'Gray wolf',role:'Top consumer',e:'hares and larger prey'}
+    ],
+    decomposers:[{n:'Bacteria'},{n:'Fungi'}], events:['wildfire','late_frost','invasive_buckthorn','early_iceout'] },
+];
+
+var EVENTS = {
+  drought:{ title:'Summer Drought',
+    scenario:function(e){return 'A long, hot summer brings very little rain to the '+e.name.toLowerCase()+'. Water levels drop lower and lower, and along the edges the plants and algae begin to die back.';},
+    firstHit:'producers', hitNote:'the plants and algae' },
+  algal_bloom:{ title:'Algae Bloom and Oxygen Crash',
+    scenario:function(e){return 'Warm water and extra runoff cause a thick algae bloom to cover the '+e.name.toLowerCase()+'. The mat blocks sunlight from the plants below, and when the algae die, decomposers use up the oxygen in the water.';},
+    firstHit:'underwater', hitNote:'the underwater plants and the fish that need oxygen' },
+  invasive_mussel:{ title:'Invasive Zebra Mussels',
+    scenario:function(e){return 'Zebra mussels arrive in the '+e.name.toLowerCase()+' and filter huge amounts of tiny algae and plankton out of the water.';},
+    firstHit:'plankton', hitNote:'the algae and zooplankton' },
+  invasive_carp:{ title:'Invasive Common Carp',
+    scenario:function(e){return 'Common carp move into the '+e.name.toLowerCase()+' and stir up the bottom as they feed, uprooting plants and clouding the water so sunlight cannot reach the producers.';},
+    firstHit:'producers', hitNote:'the rooted plants' },
+  invasive_buckthorn:{ title:'Invasive Buckthorn',
+    scenario:function(e){return 'Buckthorn spreads through the '+e.name.toLowerCase()+', shading the forest floor so native shrubs like blueberry cannot get enough light to grow.';},
+    firstHit:'producers', hitNote:'the native shrubs and berries' },
+  early_iceout:{ title:'Warm Winter, Early Ice-Out',
+    scenario:function(e){return 'A warm winter means the '+e.name.toLowerCase()+' thaws weeks early. Animals wake and plants sprout before their usual food is ready, so the timing between them no longer lines up.';},
+    firstHit:'timing', hitNote:'the timing between animals and their food' },
+  flood:{ title:'Spring Flood',
+    scenario:function(e){return 'Heavy spring rain floods the '+e.name.toLowerCase()+'. Water rises fast, washing out low nests and burrows and drowning some of the plants.';},
+    firstHit:'producers', hitNote:'the low plants, nests, and burrows' },
+  wildfire:{ title:'Grassland Wildfire',
+    scenario:function(e){return 'A dry-season wildfire sweeps across the '+e.name.toLowerCase()+', burning the standing plants down to the ground.';},
+    firstHit:'producers', hitNote:'the plants' },
+  late_frost:{ title:'Late Spring Frost',
+    scenario:function(e){return 'A surprise late frost hits the '+e.name.toLowerCase()+' after the plants have already flowered, killing many of the new leaves and blossoms.';},
+    firstHit:'producers', hitNote:'the new leaves and flowers' }
+};
+
+// deliberately-flawed AI arguments for the "check the AI" task; keyed by pattern
+var FLAWS = [
+  { id:'predator_safe', build:function(e){var top=pick(e.consumers.filter(function(c){return c.role==='Top consumer';}));
+      return { arg:'The '+top.n.toLowerCase()+' will survive well and is not affected, because it is big and strong and the event does not touch it directly.',
+        error:'It treats the top consumer as safe. But the '+top.n.toLowerCase()+' eats '+top.e+'. When the producers are hit, those prey lose their food and shrink, so the '+top.n.toLowerCase()+' has less to eat too.',
+        fix:'Trace the energy: producers down leads to prey down leads to the '+top.n.toLowerCase()+' surviving less well, not fine.' }; } },
+  { id:'reverse', build:function(e){var p=pick(e.producers);
+      return { arg:'The '+p.n.toLowerCase()+' will actually do better during the event, because fewer animals will be around to eat it.',
+        error:'It reverses the direction of the food web. The '+p.n.toLowerCase()+' is a producer that the event hits directly, so it does not get saved by having fewer consumers.',
+        fix:'Producers make their own food from sunlight and are the first ones harmed here, so the '+p.n.toLowerCase()+' survives less well.' }; } },
+  { id:'decomposer', build:function(e){return { arg:'The bacteria and fungi will die out first, because they need sunlight and plants to grow like everything else.',
+        error:'It misunderstands decomposers. Bacteria and fungi break down dead plants and animals; they do not need sunlight, and a die-off can even give them more to break down.',
+        fix:'Decomposers are usually the least harmed and keep recycling energy back into the ecosystem.' }; } }
+];
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function getEco(id){ for(var i=0;i<ECOS.length;i++){ if(ECOS[i].id===id) return ECOS[i]; } return ECOS[0]; }
+
+// mark which organisms are hit first, for highlighting + reasoning
+function isHit(ev, org, isProducer){
+  if(ev.firstHit==='producers') return isProducer;
+  if(ev.firstHit==='plankton') return /algae|zooplankton|plankton|duckweed/i.test(org.n);
+  if(ev.firstHit==='underwater') return isProducer || /bluegill|minnow|pike|walleye|fish|tadpole/i.test(org.n);
+  if(ev.firstHit==='producers') return isProducer;
+  return isProducer; // timing / default: producers as the visible first link
+}
+
+// core: build the case file content (pure, returns a data object)
+function buildCaseFile(ecoId, eventId, difficulty){
+  var e = getEco(ecoId);
+  var ev = EVENTS[eventId];
+  if(!ev) throw new Error('unknown event '+eventId);
+  var foundational = (difficulty!=='extension');
+  var cons = e.consumers.slice();
+  if(foundational){
+    // simpler web: keep a clear chain of ~5 organisms
+    var keepRoles = {'Primary consumer':2,'Secondary consumer':1,'Top consumer':1};
+    var picked=[], counts={};
+    for(var i=0;i<cons.length;i++){var r=cons[i].role; counts[r]=counts[r]||0;
+      if(counts[r]<(keepRoles[r]||0)){picked.push(cons[i]);counts[r]++;}}
+    cons = picked;
+  }
+  var scenario = ev.scenario(e);
+  var task = 'Use your '+e.name.toLowerCase()+' food web as evidence to figure out which organisms will survive well, which will survive less well, and which will not be able to survive after the '+ev.title.toLowerCase()+'.';
+  var prompts = foundational
+    ? ['Which producers ('+e.producers.slice(0,2).map(function(p){return p.n.toLowerCase();}).join(', ')+', and others) are hit first by this event?',
+       'Pick one animal. What does it eat? What happens to its food after the event?',
+       'Name one organism that will survive well and one that cannot survive.']
+    : ['Trace two different food paths from a producer up to a top consumer. Which path is hurt more, and why?',
+       'Find one organism that is harmed indirectly, not by the event itself but because its food disappears.',
+       'What might happen to the decomposers, and how does that affect the ecosystem later?',
+       'If the event reversed next season, which organism would recover first? Defend your answer.'];
+  var starters = ['These organisms survive well because...','These survive less well because...',
+    'These cannot survive because...','My evidence from the web is...','This happens because energy...'];
+  return { ecosystem:e, event:ev, difficulty:(foundational?'Foundational':'Extension'),
+    scenario:scenario, task:task, consumers:cons, prompts:prompts, starters:starters };
+}
+
+function buildFlawedArgument(ecoId){
+  var e = getEco(ecoId);
+  var flaw = pick(FLAWS);
+  return flaw.build(e);
+}
+/*PURE_END*/
+
+/* ---------- DOM wiring (not part of pure logic) ---------- */
+(function(){
+  var ecoSel=document.getElementById('ecoSel'), evSel=document.getElementById('evSel'),
+      out=document.getElementById('out'), diff='foundational';
+  ECOS.forEach(function(e){var o=document.createElement('option');o.value=e.id;o.textContent=e.name;ecoSel.appendChild(o);});
+  function fillEvents(){ evSel.innerHTML=''; var e=getEco(ecoSel.value);
+    e.events.forEach(function(id){var o=document.createElement('option');o.value=id;o.textContent=EVENTS[id].title;evSel.appendChild(o);}); }
+  fillEvents();
+  ecoSel.addEventListener('change',fillEvents);
+  document.getElementById('diffSeg').addEventListener('click',function(ev){
+    if(ev.target.dataset.d){diff=ev.target.dataset.d;
+      [].forEach.call(this.children,function(b){b.classList.toggle('on',b.dataset.d===diff);});}});
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function chip(o,hit){return '<span class="chip'+(hit?' hit':'')+'">'+esc(o.n)+(o.e?' <small>eats '+esc(o.e)+'</small>':'')+'</span>';}
+  function render(){
+    var cf=buildCaseFile(ecoSel.value, evSel.value, diff), e=cf.ecosystem, ev=cf.event;
+    var lanes='';
+    lanes+='<div class="weblane"><div class="role">Producers</div><div class="chips">'+
+      e.producers.map(function(p){return chip({n:p.n,e:p.e}, isHit(ev,p,true));}).join('')+'</div></div>';
+    ['Primary consumer','Secondary consumer','Top consumer'].forEach(function(role){
+      var list=cf.consumers.filter(function(c){return c.role===role;});
+      if(!list.length) return;
+      lanes+='<div class="weblane"><div class="role">'+role+'s</div><div class="chips">'+
+        list.map(function(c){return chip(c, isHit(ev,c,false));}).join('')+'</div></div>';
+    });
+    lanes+='<div class="weblane"><div class="role">Decomposers</div><div class="chips">'+
+      e.decomposers.map(function(d){return chip(d,false);}).join('')+'</div></div>';
+
+    var fa=buildFlawedArgument(ecoSel.value);
+    out.innerHTML =
+      '<div class="cardhead"><span>Case File · '+esc(e.name)+' · '+esc(ev.title)+'</span>'+
+        '<span class="badge">'+cf.difficulty+'</span></div>'+
+      '<div class="scenario">'+esc(cf.scenario)+'</div>'+
+      '<div class="job"><b>Your job, Field Team:</b> '+esc(cf.task)+'</div>'+
+      '<h3 class="sec">The food web (highlighted = hit first)</h3>'+lanes+
+      '<h3 class="sec">Think about</h3><ul class="prompts">'+cf.prompts.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+
+      '<h3 class="sec">Sentence starters</h3><div class="starters">'+cf.starters.map(function(s){return '<i>“'+esc(s)+'”</i>';}).join('<br>')+'</div>'+
+      '<div class="aibox"><div class="lab">Check the AI\'s argument</div>'+
+        '<p style="margin:6px 0 0">An AI wrote this survival argument about your case. Is it right? Use your food web to decide.</p>'+
+        '<div class="aiarg">“'+esc(fa.arg)+'”</div>'+
+        '<button class="btn ghost" id="revealBtn">Reveal what to check (teacher)</button>'+
+        '<div class="reveal hidden" id="revealBox"><p><span class="k">What the AI got wrong:</span> '+esc(fa.error)+'</p>'+
+          '<p><span class="k">How to fix it:</span> '+esc(fa.fix)+'</p></div></div>';
+    var rb=document.getElementById('revealBtn');
+    rb.addEventListener('click',function(){document.getElementById('revealBox').classList.toggle('hidden');});
+  }
+  document.getElementById('genBtn').addEventListener('click',render);
+  document.getElementById('surpriseBtn').addEventListener('click',function(){
+    ecoSel.selectedIndex=Math.floor(Math.random()*ecoSel.options.length); fillEvents();
+    evSel.selectedIndex=Math.floor(Math.random()*evSel.options.length);
+    diff = Math.random()<0.5?'foundational':'extension';
+    [].forEach.call(document.getElementById('diffSeg').children,function(b){b.classList.toggle('on',b.dataset.d===diff);});
+    render();
+  });
+})();
+</script>
+</body>
+</html>
